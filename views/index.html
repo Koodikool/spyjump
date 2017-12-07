@@ -2,8 +2,68 @@
 <html>
 <head>
 	<title>SpyJump</title>
+	<!-- Ajutine Style, kuna ei saanud css faili linkida -->
+	<style type="text/css">
+		* {
+			/*border: 1px solid black;*/
+			outline: none;
+		}
+		.title {
+			text-align: center;
+			font-family: Arial;
+			font-size: 40px;
+			margin-top: 100px;
+		}
+		table {margin: auto;}
+		td {
+			width: 225px;
+			text-align: center;
+		}
+		tr {
+			height: 35px;
+		}
+		input[type=button] {
+			width: 49%;
+			height: 25px;
+		}
+		input {
+			width: 97%;
+			height: 20px;
+			font-size: 14px;
+			border-radius: 300px;
+			padding-left: 5px;
+		}
+	</style>
 </head>
 <body>
-	<h1>Tere?</h1>
+	<!-- Pealkiri -->
+	<div class="title">
+		<p>SpyJump</p>
+	</div>
+
+	<!-- Nime ja mängu ID sisestamine -->
+	<div class="content">
+		<table>
+			<tr>
+				<td>
+					<input type="" name="name" placeholder="username">
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<input type="" name="gameID" placeholder="gameID">
+				</td>
+			</tr>
+
+			<!-- Nupud mängu loomiseks ja liitumiseks -->
+			<tr>
+				<td>
+					<input type="button" name="" value="Create">
+					<input type="button" name="" value="Join">
+				</td>
+			</tr>
+		</table>
+	</div>
 </body>
 </html>
