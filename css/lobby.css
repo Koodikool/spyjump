@@ -1,0 +1,54 @@
+* {
+	/*border: 1px solid black;*/
+}
+
+/*.heading h1{
+	width: 200px;
+}
+*/
+
+h1, p{
+	text-align: center;
+
+}
+
+#kood {
+	width: 80px;
+	border: 2px solid black;
+	margin: auto;
+	margin-bottom: 10px;
+	padding: 4px 0px 4px 0px;
+}
+
+table {
+	margin: auto;
+	/*border: 1px solid black;*/
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+table p{
+	margin-bottom: 4px;
+	margin-top: 4px;
+}
+
+.alustaNupp {
+	text-align: center;
+}
+
+.alustaNupp button{
+	border-radius: 4px;
+}
+
+td, th {
+	border: 1px solid black;
+	padding: 2px 30px;
+}
+
+td {
+	background-color: rgba(255, 0, 0, 0.45);
+}
+
+th {
+	background-color: rgba(84, 255, 235, 0.7);
+}
