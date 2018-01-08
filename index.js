@@ -1,17 +1,39 @@
 var express = require('express');
-var app = express()
-var http = require('http').Server(app);
+var app = express();
+var path = require('path');
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
+var port = process.env.PORT || 3000;
 
-app.use(express.static(__dirname))
-
-app.get('/', function(req, res){
-	res.sendFile('views/index.html', {root: __dirname })
+server.listen(port, function () {
+	console.log('Server listening at port %d', port);
 });
 
-app.get('/lobby', function(req, res){
-	res.sendFile('views/lobby.html', {root: __dirname })
-})
+// Static HTML files
+app.use(express.static(path.join(__dirname, 'public')));
 
-http.listen(3000, function(){
-	console.log('listening on *:3000');
+var totalConnections = 0
+
+// Sockets connect
+io.on('connection', function (socket) {
+	console.log("New user")
+
+	// New user connected
+	totalConnections++
+	socket.broadcast.emit('users', {
+		total: totalConnections
+	})
+
+	// Join game
+	socket.on('register', function(data){
+		console.log(`User ${data.username} joined game ${data.gameid}`)
+	})
+
+	// User disconnected
+	socket.on('disconnect', function () {
+		totalConnections--
+		socket.broadcast.emit('users', {
+			total: totalConnections
+		})
+	});
 });
