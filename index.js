@@ -26,10 +26,5 @@ io.on('connection', function (socket) {
 	
 	gameStart(socket)
 	
-	//User telling it is disconnecting
-	socket.on('disconnect', function(){
-		console.log("User disconnected")
-		totalConnections--
-		socket.broadcast.emit('usercount', totalConnections)
-	})
+	
 });

@@ -2,7 +2,7 @@ console.log('game.js')
 
 var database = {}
 var gameStructure = {
-	players: {}
+	players: {},
 	details: {}
 }
 var userStructure = {
@@ -12,6 +12,9 @@ var userStructure = {
 }
 
 gameStart = function(socket) {
+	username = null
+	gameid = null
+	
 	//User tells server his name and gameid
 	socket.on('register', function (data){
 		console.log("Register:", data)
@@ -29,5 +32,29 @@ gameStart = function(socket) {
 			database[data.gameid].players[data.username] = userStructure
 			socket.emit('msg', "User registered.")
 		}
+		
+		username = data.username
+		gameid = data.gameid
+		console.log("Database: ", database)
+		
+		socket.broadcast.emit('roomPlayerList', database)
+		socket.emit('roomPlayerList', database)
 	})
+	
+	//User telling it is disconnecting
+	socket.on('disconnect', function(){
+		console.log("User disconnected")
+		// totalConnections--
+		// socket.broadcast.emit('usercount', totalConnections)
+		if (!database[gameid]) {
+			return
+		}
+		
+		delete database[gameid].players[username]
+		socket.broadcast.emit('roomPlayerList', database)
+	})
+}
+
+playerListUpdate = function() {
+	
 }
