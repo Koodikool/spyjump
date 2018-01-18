@@ -25,10 +25,4 @@ io.on('connection', function (socket) {
 	}, 100)
 
 	gameStart(socket)
-
-	socket.on('disconnect', function(){
-		console.log("User disconnected")
-		totalConnections--
-		socket.broadcast.emit('usercount', totalConnections)
-	})
 });
