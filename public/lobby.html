@@ -6,30 +6,20 @@
 </head>
 <body>
 	<div class="heading">
-		<button>Lahku</button>
+		<button onclick="lahku()">Lahku</button>
 		<h1>Spyjump</h1>
 		<p id="kood">[Kood]</p>
+		<p id="roll"></p>
+		<p id="place"></p>
 	</div>
 	<div class="inimesed">
 		<table>
 			<th>Mängijad</th>
-			<tr>
-				<td><p>EsimeneMängija</p></td>
-			</tr>
-			<tr>
-				<td><p>TeineMängija</p></td>
-			</tr>
-			<tr>
-				<td><p>KolmasMängija</p></td>
-			</tr>
-			<tr>
-				<td><p>NeljasMängija</p></td>
-			</tr>
 			<th>Vaatajad</th>
 		</table>
 	</div>
 	<div  class="alustaNupp">
-		<button>Alusta</button>
+		<button onclick="giveRoles()">Alusta</button>
 	</div>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="lobby.js"></script>
