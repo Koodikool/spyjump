@@ -28,26 +28,8 @@ gameStart = function(socket) {
 	
 	// User tells server their username and gameid
 	socket.on('register', function(data){
-		if(!database[data.gameid]) {
-			username = data.username
-		} else {
-			var playersLength = Object.keys(database[data.gameid].players).length
-			var samePlayers = 0
-			var index = 0
+		username = data.username
 
-			while (index < playersLength) {
-				var currentPlayer = Object.keys(database[data.gameid].players)[index]
-				if(database[data.gameid].players[currentPlayer].name === username){
-					samePlayers++
-				}
-				index++
-			}
-			if(samePlayers >= 1){
-				username = data.username + "2"
-			} else {
-				username = data.username
-			}
-		}
 		console.log("Register:", data)
 		console.log("Username:", username)
 		console.log("User's socket ID:", socket.id)
@@ -85,72 +67,43 @@ gameStart = function(socket) {
 	})
 
 	socket.on('disconnect', function() {
-		setTimeout(function(){
-			// --RESUME SOCKET CONNECTION ON REFRESH--
-			// 
-			// var playersLength = Object.keys(database[socket.gameid].players).length
-			// var samePlayers = 0
-			// var index = 0
-			// 
-			// while (index < playersLength) {
-			// 	var currentPlayer = Object.keys(database[socket.gameid].players)[index]
-			// 	if(database[socket.gameid].players[currentPlayer].name === database[socket.gameid].players[socket.id].name)
-			// 		samePlayers++
-			// 	index++
-			// }
-			// 
-			// if(samePlayers === 2)
-			// 	return
-			// --RESUME SOCKET CONNECTION ON REFRESH--
-			var wasAdmin = false
+		var wasAdmin = false
 
-			console.log("User disconnected -->", socket.id)
-			if (!database[socket.gameid]) {
-				return
-			}
+		console.log("User disconnected -->", socket.id)
+		if (!database[socket.gameid]) {
+			return
+		}
 
-			if (database[socket.gameid].players[socket.id].admin)
-				wasAdmin = true
+		if (database[socket.gameid].players[socket.id].admin)
+			wasAdmin = true
 
-			delete database[socket.gameid].players[socket.id]
-			database = JSON.parse(JSON.stringify(database))
-			socket.broadcast.emit('roomPlayerList', database)
-			if (Object.keys(database[socket.gameid].players).length === 0) {
-				console.log("DELETE GAME", socket.gameid)
-				delete database[socket.gameid]
-			}
-
-			if(wasAdmin){
-				console.log("DATABASE:", database[socket.gameid].players)
-				var playersLength = Object.keys(database[socket.gameid].players).length
-				console.log(playersLength)
-				var index = Math.floor((Math.random() * playersLength))
-				console.log(index)
-				console.log(database)
-				console.log(database[socket.gameid])
-				console.log(Object.keys(database[socket.gameid].players)[index])
-				database[socket.gameid].players[Object.keys(database[socket.gameid].players)[index]].admin = true
-				console.log("DATABASE:", database[socket.gameid].players)
-			}
-			wasAdmin = false
-			console.log("DATABASE:", database)			
-		}, 1)
+		delete database[socket.gameid].players[socket.id]
+		database = JSON.parse(JSON.stringify(database))
+		if (Object.keys(database[socket.gameid].players).length === 0) {
+			console.log("DELETE GAME", socket.gameid)
+			delete database[socket.gameid]
+		}
+		if(database[socket.gameid] && wasAdmin)
+			database[socket.gameid].players[Object.keys(database[socket.gameid].players)[0]].admin = true
+		wasAdmin = false
+		console.log("DATABASE:", database)
+		socket.broadcast.emit('roomPlayerList', database)
 	})
 
 	socket.on('giveRoles', function() {
-		if(database[socket.gameid].details.inGame) {
-			console.log("GAME ALREADY ON")
-			return // if game is already on
-		}
-
-		database[socket.gameid].details.inGame = true
-
 		if (!database[socket.gameid].players[socket.id].admin){
 			console.log()
 			console.log("NON-ADMIN PLAYER TRIED TO START GAME")
 			console.log()
 			return // if not admin, can't start game
 		}
+
+		if(database[socket.gameid].details.inGame) {
+			console.log("GAME ALREADY ON")
+			return // if game is already on
+		}
+
+		database[socket.gameid].details.inGame = true
 
 		console.log()
 		console.log("-- STARTING GAME ---")
@@ -164,13 +117,27 @@ gameStart = function(socket) {
 
 		var playersLength = Object.keys(database[socket.gameid].players).length
 		var spyNr = parseInt(playersLength * Math.random())
-
+		var roles = Object.values(placesDB[place])
+		var rolesLength = Object.keys(placesDB[place]).length
 		var index = 0
+
 		while (index < playersLength) {
 			var currentPlayer = Object.keys(database[socket.gameid].players)[index]
-			database[socket.gameid].players[currentPlayer].role = placesDB[place][index]
+			var currentRoleIndex = Math.floor(Math.random() * rolesLength)
+			var currentRole = roles[currentRoleIndex]
+
+			console.log("roles:", roles)
+			console.log("player:", currentPlayer)
+			console.log("currentRoleIndex:", currentRoleIndex)
+			console.log("currentRole:", currentRole)
+
+			roles.splice(roles.indexOf(currentRole), 1)
+			console.log("roles:", roles)
+
+			database[socket.gameid].players[currentPlayer].role = currentRole
 			console.log(database[socket.gameid].players[currentPlayer].name + " --> " + database[socket.gameid].players[currentPlayer].role)
 			index++
+			rolesLength--
 		}
 		database[socket.gameid].place = place
 		database[socket.gameid].players[Object.keys(database[socket.gameid].players)[spyNr]].role = 'SPY'
@@ -187,16 +154,16 @@ gameStart = function(socket) {
 	})
 
 	socket.on('endGame', function() {
-		if(!database[socket.gameid].details.inGame) {
-			console.log("NO GAME RUNNING")
-			return
-		}
-
 		if (!database[socket.gameid].players[socket.id].admin){
 			console.log()
 			console.log("NON-ADMIN PLAYER TRIED TO END GAME")
 			console.log()
 			return // if not admin, can't end game
+		}
+
+		if(!database[socket.gameid].details.inGame) {
+			console.log("NO GAME RUNNING")
+			return
 		}
 
 		console.log()

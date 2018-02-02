@@ -34,20 +34,22 @@ socket.on('roomPlayerList', function(database){
 	console.log(database[gameid].players[socket.id])
 	console.log(database[gameid].details.inGame)
 	console.log(!database[gameid].players[socket.id].spectator)
-	if (database[gameid].players[socket.id] && database[gameid].details.inGame && !database[gameid].players[socket.id].spectator) {
-		var myRole = database[gameid].players[socket.id].role
+	if (players[socket.id] && game.details.inGame && !players[socket.id].spectator) {
+		var myRole = players[socket.id].role
 		var place = database[gameid].place
 
 		console.log(database[gameid].players)
 
 		if (myRole !== 'SPY'){
 			document.querySelector('#place').innerHTML = 'Koht on ' + place
+			document.querySelector('#roll').innerHTML = 'Sa oled: ' + myRole
 		}else{
 			document.querySelector('#place').innerHTML = ''
+			document.querySelector('#roll').innerHTML = 'SPY'
 		}
 	}
 
-	if(!database[gameid].details.inGame){
+	if(!game.details.inGame){
 		document.querySelector('#roll').innerHTML = ''
 		document.querySelector('#place').innerHTML = ''
 	}
@@ -60,17 +62,35 @@ socket.on('roomPlayerList', function(database){
 		name = name.replace('<', '')
 
 		if(keyvalue[1].spectator){
-			document
-				.querySelector('.inimesed tbody tr:last-child')
-				.insertAdjacentHTML("beforeend", "<td>"+name+"</td>")
+			if(keyvalue[0] === socket.id){
+				document
+					.querySelector('.inimesed tbody tr:last-child')
+					.insertAdjacentHTML("beforeend", "<td>"+"|YOU| "+name+"</td>")
+			}else{
+				document
+					.querySelector('.inimesed tbody tr:last-child')
+					.insertAdjacentHTML("beforeend", "<td>"+name+"</td>")
+			}
 		} else if(keyvalue[1].admin){
-			document
-				.querySelector('.inimesed tbody')
-				.insertAdjacentHTML("beforeend", "<tr><td style='background-color:yellow'>"+name+"</td></tr>")
+			if(keyvalue[0] === socket.id){
+				document
+					.querySelector('.inimesed tbody')
+					.insertAdjacentHTML("beforeend", "<td style='background-color:yellow; border-style:dashed; border-width:2px'>"+"|YOU| "+name+"</td>")
+			}else{
+				document
+					.querySelector('.inimesed tbody')
+					.insertAdjacentHTML("beforeend", "<tr><td style='background-color:yellow; border-style:dashed; border-width: 2px'>"+name+"</td></tr>")
+			}
 		}else {
-			document
-				.querySelector('.inimesed tbody')
-				.insertAdjacentHTML("beforeend", "<tr><td>"+name+"</td></tr>")		
+			if(keyvalue[0] === socket.id){
+				document
+					.querySelector('.inimesed tbody')
+					.insertAdjacentHTML("beforeend", "<td>"+"|YOU| "+name+"</td>")
+			}else{
+				document
+					.querySelector('.inimesed tbody')
+					.insertAdjacentHTML("beforeend", "<tr><td>"+name+"</td></tr>")		
+			}
 		}
 	})
 })
