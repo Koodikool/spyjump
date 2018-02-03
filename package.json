@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/koodikool/spyjump#readme",
   "dependencies": {
+    "clear": "0.0.1",
     "express": "^4.16.2",
     "nodemon": "^1.12.5",
     "socket.io": "^2.0.4"

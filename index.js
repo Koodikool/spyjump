@@ -13,16 +13,18 @@ server.listen(port, function () {
 // Static HTML files
 app.use(express.static(path.join(__dirname, 'public')));
 
-var totalConnections = 0
+// var totalConnections = 0
 
 // Sockets connect
 io.on('connection', function (socket) {
+	console.log()	
 	console.log("New user")
-	totalConnections++
-
-	setTimeout(function(){
-		socket.broadcast.emit('usercount', totalConnections)
-	}, 100)
-
 	gameStart(socket)
+
+
+	// totalConnections++
+	// setTimeout(function(){
+	// 	socket.broadcast.emit('usercount', totalConnections)
+	// }, 100)
+
 });
